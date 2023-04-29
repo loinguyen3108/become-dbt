@@ -14,6 +14,7 @@ final as (
         {% endif -%}
         {%- endfor %}
     from payments
+    group by order_id
 )
 
 select * from final;

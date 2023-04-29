@@ -17,4 +17,4 @@ final as (
     group by order_id
 )
 
-select * from final;
+select * from final

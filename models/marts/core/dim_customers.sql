@@ -32,7 +32,7 @@ customer_orders as (
     from orders
     left join payments using (order_id)
     left join employees using (customer_id)
-    group by 1
+    group by customer_id, employee_id
 
 ),
 

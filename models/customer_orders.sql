@@ -25,24 +25,24 @@ customer_orders as (
         max(ORDER_DATE) as most_recent_order_date, 
         count(ORDERS.ID) AS number_of_orders
 from {{ source('jaffle_shop', 'customers') }} C 
-left join {{ source('jaffle_shop', 'orders') }} as Orders
-on orders.USER_ID = C.ID 
+left join {{ source('jaffle_shop', 'orders') }} as Orders on orders.USER_ID = C.ID 
 group by 1)
 
 select
-p.*,
-ROW_NUMBER() OVER (ORDER BY p.order_id) as transaction_seq,
-ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY p.order_id) as customer_sales_seq,
-CASE WHEN c.first_order_date = p.order_placed_at
-THEN 'new'
-ELSE 'return' END as nvsr,
-x.clv_bad as customer_lifetime_value,
-c.first_order_date as fdos
+    p.*,
+    ROW_NUMBER() OVER (ORDER BY p.order_id) as transaction_seq,
+    ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY p.order_id) as customer_sales_seq,
+    CASE 
+        WHEN c.first_order_date = p.order_placed_at THEN 'new'
+        ELSE 'return' 
+    END as nvsr,
+    x.clv_bad as customer_lifetime_value,
+    c.first_order_date as fdos
 FROM paid_orders p
 left join customer_orders as c USING (customer_id)
 LEFT OUTER JOIN 
 (
-        select
+    select
         p.order_id,
         sum(t2.total_amount_paid) as clv_bad
     from paid_orders p

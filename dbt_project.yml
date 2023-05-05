@@ -33,7 +33,20 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 models:
   jaffle_shop:
+    +required_tests: {"unique.*|not_null": 2}
     staging:
       +materialized: view
     marts:
       +materialized: table
+
+dispatch:
+  - macro_namespace: dbt
+    search_order: ['dbt_project_evaluator', 'dbt']
+
+# vars:
+#   dbt_dataquality:
+#     dbt_dataquality_database: my_database # optional, default is target.database
+#     dbt_dataquality_schema: my_schema # optional, default is target.schema
+#     dbt_dataquality_table: my_table # optional, default is 'stg_dbt_dataquality'
+#     dbt_dataquality_stage: my_internal_stage | my_external_stage, default is 'dbt_dataquality'),
+#     dbt_dataquality_target_path: my_dbt_target_directory # optional, default is 'target'
